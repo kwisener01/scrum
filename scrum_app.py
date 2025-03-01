@@ -1,69 +1,35 @@
 import streamlit as st
 import pandas as pd
-import gspread
-from google.oauth2.service_account import Credentials
 from datetime import date, datetime, timedelta
-import pytz  # Timezone handling
-import json
+import gspread
+import pytz
+from google.oauth2.service_account import Credentials
 
-# Define the scope
-scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+# Ensure timedelta is correctly recognized
+from datetime import timedelta
 
+# Google Sheets setup
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 # Load credentials from Streamlit Secrets
-credentials = Credentials.from_service_account_info(st.secrets["google_sheets"], scopes=scope)
+credentials = Credentials.from_service_account_info(st.secrets["google_sheets"], scopes=SCOPES)
 
 # Authorize gspread
 client = gspread.authorize(credentials)
 
 # Set timezone to EST (Eastern Standard Time)
 est = pytz.timezone("US/Eastern")
-
-# Append data to Google Sheets
-def append_to_google_sheets(data, sheet_name="scrum", worksheet_name="Personal"):
-    try:
-        spreadsheet = client.open(sheet_name)
-        worksheet = spreadsheet.worksheet(worksheet_name)  # Use the specific worksheet
-        data_as_list = data.values.tolist()
-        worksheet.append_rows(data_as_list, table_range="A1")
-        st.success("Data appended to Google Sheets!")
-    except gspread.exceptions.SpreadsheetNotFound:
-        st.error(f"Spreadsheet '{sheet_name}' not found. Ensure it exists and is shared with the service account.")
-
-# Load data from Google Sheets
-def load_from_google_sheets(sheet_name="scrum", worksheet_name="Personal"):
-    try:
-        spreadsheet = client.open(sheet_name)
-        worksheet = spreadsheet.worksheet(worksheet_name)
-        data = pd.DataFrame(worksheet.get_all_records())
-        return data
-    except gspread.exceptions.SpreadsheetNotFound:
-        st.error(f"Spreadsheet '{sheet_name}' not found. Ensure it exists and is shared with the service account.")
-        return pd.DataFrame()
-    except gspread.exceptions.APIError as e:
-        st.error(f"Google Sheets API error: {str(e)}. Please check access permissions and API quota.")
-        return pd.DataFrame()
-    try:
-        spreadsheet = client.open(sheet_name)
-        worksheet = spreadsheet.worksheet(worksheet_name)  # Use the specific worksheet
-        data = pd.DataFrame(worksheet.get_all_records())
-        return data
-    except gspread.exceptions.SpreadsheetNotFound:
-        st.error(f"Spreadsheet '{sheet_name}' not found. Ensure it exists and is shared with the service account.")
-        return pd.DataFrame()
-
-
-
 sheet = client.open("scrum")
+
+# Define worksheets outside of session state checks to ensure they are always accessible
+backlog_ws = sheet.worksheet("Backlog")
+sprint_ws = sheet.worksheet("Sprints")
 
 # Initialize session state for backlog and sprints
 if 'backlog' not in st.session_state:
-    st.session_state.backlog = sheet.worksheet("Backlog").get_all_records()
-    backlog_ws = sheet.worksheet("Backlog")
+    st.session_state.backlog = backlog_ws.get_all_records()
 if 'sprints' not in st.session_state:
-    st.session_state.sprints = sheet.worksheet("Sprints").get_all_records()
-    sprint_ws = sheet.worksheet("Sprints")
+    st.session_state.sprints = sprint_ws.get_all_records()
 
-    
 st.title("Scrum Project Management App")
 
 # Backlog Management
@@ -76,7 +42,6 @@ with st.form("add_backlog_item"):
     if submit and task_name:
         new_task = {"Task": task_name, "Priority": priority, "Story Points": story_points, "Status": "Backlog"}
         st.session_state.backlog.append(new_task)
-        backlog_ws = sheet.worksheet("Backlog")
         backlog_ws.append_row(list(new_task.values()))
 
 # Display Backlog
@@ -97,10 +62,8 @@ if start_sprint and sprint_name:
         "Start Date": str(current_time.date()),
         "End Date": str((current_time + timedelta(days=int(round(sprint_duration)))).date()),
         "Tasks": ""
-
     }
     st.session_state.sprints.append(new_sprint)
-    sprint_ws = sheet.worksheet("Sprints")
     sprint_ws.append_row(list(new_sprint.values()))
     st.success(f"Sprint '{sprint_name}' started!")
 
