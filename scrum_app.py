@@ -83,7 +83,7 @@ if st.session_state.sprints:
         for task in st.session_state.backlog:
             if task.get("Task") == selected_task:
                 for sprint in st.session_state.sprints:
-                    if sprint["Sprint Name"] == selected_sprint:
+                    if sprint.get("Sprint Name") == selected_sprint:
                         sprint["Tasks"] += selected_task + ", "
                 task["Status"] = "In Sprint"
         backlog_ws.update([list(t.values()) for t in st.session_state.backlog])
