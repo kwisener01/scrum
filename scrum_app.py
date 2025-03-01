@@ -8,13 +8,16 @@ from google.oauth2.service_account import Credentials
 # Ensure timedelta is correctly recognized
 from datetime import timedelta
 
-# Google Sheets setup
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+
+# Define the scope
+scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+
 # Load credentials from Streamlit Secrets
-credentials = Credentials.from_service_account_info(st.secrets["google_sheets"], scopes=SCOPES)
+credentials = Credentials.from_service_account_info(st.secrets["google_sheets"], scopes=scope)
 
 # Authorize gspread
 client = gspread.authorize(credentials)
+
 
 # Set timezone to EST (Eastern Standard Time)
 est = pytz.timezone("US/Eastern")
