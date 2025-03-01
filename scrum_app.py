@@ -88,11 +88,13 @@ sprint_duration = st.number_input("Sprint Duration (days)", min_value=1, max_val
 start_sprint = st.button("Start Sprint")
 
 if start_sprint and sprint_name:
+    current_time = datetime.now(est)
     new_sprint = {
         "Sprint Name": sprint_name,
-        "Start Date": str(datetime.date.today()),
-        "End Date": str(datetime.date.today() + datetime.timedelta(days=sprint_duration)),
+        "Start Date": str(current_time.date()),
+        "End Date": str((current_time + timedelta(days=sprint_duration)).date()),
         "Tasks": ""
+}
     }
     st.session_state.sprints.append(new_sprint)
     sprint_ws = sheet.worksheet("Sprints")
