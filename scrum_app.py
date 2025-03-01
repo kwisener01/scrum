@@ -69,7 +69,10 @@ if start_sprint and sprint_name:
 
 # Assign Tasks to Sprint
 if st.session_state.sprints:
-    selected_sprint = st.selectbox("Select Sprint", [s["Sprint Name"] for s in st.session_state.sprints])
+    selected_sprint = st.selectbox(
+    "Select Sprint", 
+    [s.get("Sprint Name", "Unnamed Sprint") for s in st.session_state.sprints] if st.session_state.sprints else ["No sprints available"]
+)
     selected_task = st.selectbox(
     "Select Task from Backlog", 
     [task["Task"] for task in st.session_state.backlog] if st.session_state.backlog else ["No tasks available"]
