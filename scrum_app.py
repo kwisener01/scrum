@@ -58,9 +58,12 @@ sheet = client.open("scrum")
 # Initialize session state for backlog and sprints
 if 'backlog' not in st.session_state:
     st.session_state.backlog = sheet.worksheet("Backlog").get_all_records()
+    backlog_ws = sheet.worksheet("Backlog")
 if 'sprints' not in st.session_state:
     st.session_state.sprints = sheet.worksheet("Sprints").get_all_records()
+    sprint_ws = sheet.worksheet("Sprints")
 
+    
 st.title("Scrum Project Management App")
 
 # Backlog Management
