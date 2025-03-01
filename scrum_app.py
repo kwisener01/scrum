@@ -81,7 +81,7 @@ if st.session_state.sprints:
     
     if assign_task and selected_sprint and selected_task:
         for task in st.session_state.backlog:
-            if task["Task"] == selected_task:
+            if task.get("Task") == selected_task:
                 for sprint in st.session_state.sprints:
                     if sprint["Sprint Name"] == selected_sprint:
                         sprint["Tasks"] += selected_task + ", "
