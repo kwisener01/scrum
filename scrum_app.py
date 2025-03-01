@@ -92,7 +92,7 @@ if start_sprint and sprint_name:
     new_sprint = {
         "Sprint Name": sprint_name,
         "Start Date": str(current_time.date()),
-        "End Date": str((current_time + timedelta(days=sprint_duration)).date()),
+        "End Date": str((current_time + timedelta(days=int(round(sprint_duration)))).date()),
         "Tasks": ""
 
     }
