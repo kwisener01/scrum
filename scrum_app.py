@@ -75,7 +75,7 @@ if st.session_state.sprints:
 )
     selected_task = st.selectbox(
     "Select Task from Backlog", 
-    [task["Task"] for task in st.session_state.backlog] if st.session_state.backlog else ["No tasks available"]
+    [task.get("Task", "Unnamed Task") for task in st.session_state.backlog] if st.session_state.backlog else ["No tasks available"]
 )
     assign_task = st.button("Assign Task to Sprint")
     
