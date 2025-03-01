@@ -93,8 +93,13 @@ if st.session_state.sprints:
 # Display Sprint Details
 st.header("Sprint Overview")
 for sprint in st.session_state.sprints:
-    st.subheader(sprint["Sprint Name"])
-    st.write(f"Start: {sprint['Start Date']}, End: {sprint['End Date']}")
-    st.write(f"Tasks: {sprint['Tasks']}")
+    sprint_name = sprint.get("Sprint Name", "Unnamed Sprint")
+    start_date = sprint.get("Start Date", "Unknown Start")
+    end_date = sprint.get("End Date", "Unknown End")
+    tasks = sprint.get("Tasks", "No tasks assigned")
+    
+    st.subheader(sprint_name)
+    st.write(f"Start: {start_date}, End: {end_date}")
+    st.write(f"Tasks: {tasks}")
 
 # Placeholder for AI Sprint Suggestions (To be implemented later)
