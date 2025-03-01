@@ -8,16 +8,13 @@ from google.oauth2.service_account import Credentials
 # Ensure timedelta is correctly recognized
 from datetime import timedelta
 
-
-# Define the scope
+# Google Sheets setup
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-
 # Load credentials from Streamlit Secrets
 credentials = Credentials.from_service_account_info(st.secrets["google_sheets"], scopes=scope)
 
 # Authorize gspread
 client = gspread.authorize(credentials)
-
 
 # Set timezone to EST (Eastern Standard Time)
 est = pytz.timezone("US/Eastern")
@@ -73,7 +70,10 @@ if start_sprint and sprint_name:
 # Assign Tasks to Sprint
 if st.session_state.sprints:
     selected_sprint = st.selectbox("Select Sprint", [s["Sprint Name"] for s in st.session_state.sprints])
-    selected_task = st.selectbox("Select Task from Backlog", [task["Task"] for task in st.session_state.backlog])
+    selected_task = st.selectbox(
+    "Select Task from Backlog", 
+    [task["Task"] for task in st.session_state.backlog] if st.session_state.backlog else ["No tasks available"]
+)
     assign_task = st.button("Assign Task to Sprint")
     
     if assign_task and selected_sprint and selected_task:
