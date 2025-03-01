@@ -94,7 +94,7 @@ if start_sprint and sprint_name:
         "Start Date": str(current_time.date()),
         "End Date": str((current_time + timedelta(days=sprint_duration)).date()),
         "Tasks": ""
-}
+
     }
     st.session_state.sprints.append(new_sprint)
     sprint_ws = sheet.worksheet("Sprints")
