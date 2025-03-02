@@ -73,30 +73,6 @@ st.sidebar.markdown("""
 
 st.title("Scrum Project Management App")
 
-# Introduction to Agile and Scrum
-st.header("What is the Agile Framework?")
-st.markdown("""
-Agile is a project management and product development approach that emphasizes **iterative progress, collaboration, and flexibility**. 
-It helps teams **respond to change efficiently** and deliver **continuous value**.
-
-### Key Agile Principles:
-- **Customer Collaboration Over Contract Negotiation** 📢
-- **Responding to Change Over Following a Plan** 🔄
-- **Individuals & Interactions Over Processes & Tools** 🤝
-- **Working Software Over Comprehensive Documentation** ✅
-
-### What is Scrum?
-Scrum is a lightweight **Agile framework** that helps teams break work into **manageable sprints** (time-boxed iterations) and continuously improve.
-
-### How to Think and Work in Scrum
-1. **Define Clear Goals** 🎯 – What needs to be achieved in the sprint?
-2. **Prioritize and Break Down Tasks** 📌 – Organize work in the **Product Backlog**.
-3. **Work in Iterations (Sprints)** ⏳ – Short, focused development cycles (e.g., 2 weeks).
-4. **Hold Daily Standups** 🗣️ – Quick check-ins to align and remove blockers.
-5. **Deliver and Reflect** 🔄 – Evaluate completed work and improve for the next sprint.
-
-By following Scrum, teams can stay adaptive, efficient, and **continuously deliver value**! 🚀
-""")
 
 # Backlog Management
 st.header("Product Backlog")
@@ -196,3 +172,30 @@ if st.session_state.sprints:
     st.pyplot(fig)
 else:
     st.write("No sprint data available for a burndown chart.")
+
+
+
+# Introduction to Agile and Scrum
+st.header("What is the Agile Framework?")
+st.markdown("""
+Agile is a project management and product development approach that emphasizes **iterative progress, collaboration, and flexibility**. 
+It helps teams **respond to change efficiently** and deliver **continuous value**.
+
+### Key Agile Principles:
+- **Customer Collaboration Over Contract Negotiation** 📢
+- **Responding to Change Over Following a Plan** 🔄
+- **Individuals & Interactions Over Processes & Tools** 🤝
+- **Working Software Over Comprehensive Documentation** ✅
+
+### What is Scrum?
+Scrum is a lightweight **Agile framework** that helps teams break work into **manageable sprints** (time-boxed iterations) and continuously improve.
+
+### How to Think and Work in Scrum
+1. **Define Clear Goals** 🎯 – What needs to be achieved in the sprint?
+2. **Prioritize and Break Down Tasks** 📌 – Organize work in the **Product Backlog**.
+3. **Work in Iterations (Sprints)** ⏳ – Short, focused development cycles (e.g., 2 weeks).
+4. **Hold Daily Standups** 🗣️ – Quick check-ins to align and remove blockers.
+5. **Deliver and Reflect** 🔄 – Evaluate completed work and improve for the next sprint.
+
+By following Scrum, teams can stay adaptive, efficient, and **continuously deliver value**! 🚀
+""")
