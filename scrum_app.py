@@ -96,6 +96,26 @@ if st.session_state.backlog:
 
 # Sprint Planning
 st.header("Sprint Planning")
+
+# Assign Tasks to Sprint
+st.header("Assign Tasks to Sprint")
+if st.session_state.sprints and st.session_state.backlog:
+    selected_sprint = st.selectbox("Select Sprint", [s["Sprint Name"] for s in st.session_state.sprints if "Sprint Name" in s and s["Sprint Name"].strip()] if st.session_state.sprints else ["No sprints available"])
+    selected_task = st.selectbox("Select Task from Backlog", [task["Task"] for task in st.session_state.backlog if "Task" in task] if st.session_state.backlog else ["No tasks available"])
+    assigned_person = next((task.get("Assigned To", "") for task in st.session_state.backlog if task.get("Task") == selected_task), "")
+    assigned_person = st.text_input("Assign To (Enter Name)", assigned_person)
+    assign_task = st.button("Assign Task to Sprint")
+    
+    if assign_task and selected_sprint and selected_task and assigned_person:
+        for task in st.session_state.backlog:
+            if task.get("Task") == selected_task:
+                for sprint in st.session_state.sprints:
+                    if sprint.get("Sprint Name") == selected_sprint:
+                        sprint["Tasks"] += f"{selected_task} (Assigned to: {assigned_person}), "
+                task["Status"] = "In Sprint"
+        backlog_ws.update('A2', [list(t.values()) for t in st.session_state.backlog])
+        sprint_ws.update('A2', [list(s.values()) for s in st.session_state.sprints])
+        st.success(f"Task '{selected_task}' assigned to Sprint '{selected_sprint}' and assigned to '{assigned_person}'")
 sprint_name = st.text_input("Sprint Name")
 sprint_duration = st.number_input("Sprint Duration (days)", min_value=1, max_value=30, step=1)
 start_sprint = st.button("Start Sprint")
