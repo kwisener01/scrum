@@ -1,4 +1,5 @@
 import streamlit as st
+import matplotlib.pyplot as plt
 import pandas as pd
 from datetime import date, datetime, timedelta
 import gspread
@@ -29,6 +30,46 @@ if 'backlog' not in st.session_state:
     st.session_state.backlog = backlog_ws.get_all_records()
 if 'sprints' not in st.session_state:
     st.session_state.sprints = sprint_ws.get_all_records()
+
+st.set_page_config(page_title="Scrum Project Management", layout="wide")
+
+# Sidebar How-To Guide
+st.sidebar.title("How To Use This App")
+st.sidebar.markdown("""
+### Step 1: Populate the Backlog
+1️⃣ Go to the **Product Backlog** section.
+2️⃣ Enter **Task Name**.
+3️⃣ Choose a **Priority** (High, Medium, Low).
+4️⃣ Define **Story Points** (effort estimate).
+5️⃣ Click **"Add to Backlog"**.
+
+### Step 2: Create a Sprint
+1️⃣ Navigate to **Sprint Planning**.
+2️⃣ Enter a **Sprint Name**.
+3️⃣ Set a **Sprint Duration** (e.g., 2 weeks).
+4️⃣ Click **"Start Sprint"**.
+
+### Step 3: Assign Tasks to the Sprint
+1️⃣ Select a **Sprint** from the dropdown.
+2️⃣ Select a **Task** from the backlog.
+3️⃣ Click **"Assign Task to Sprint"**.
+
+### Step 4: Track Progress
+1️⃣ View active sprints under **Sprint Overview**.
+2️⃣ Update tasks as they are completed.
+
+### Step 5: Complete the Sprint
+1️⃣ Conduct a **Sprint Review** (show progress).
+2️⃣ Conduct a **Sprint Retrospective** (improve future sprints).
+3️⃣ Move unfinished tasks to the next sprint.
+
+### Best Practices for Scrum Success
+✅ **Keep Sprints Short** (1-4 weeks).
+✅ **Prioritize High-Value Tasks First**.
+✅ **Hold Daily Standups to Remove Blockers**.
+✅ **Update Backlog and Sprint Progress Regularly**.
+✅ **Retrospectives Improve Process Efficiency**.
+""")
 
 st.title("Scrum Project Management App")
 
@@ -103,7 +144,7 @@ for sprint in st.session_state.sprints:
     st.write(f"Tasks: {tasks}")
 
 # AI-Powered Sprint Suggestions
-st.header("Sprint Suggestions")
+st.header("AI Sprint Suggestions")
 if st.session_state.sprints:
     sprint_velocity = [len(s.get("Tasks", "").split(", ")) for s in st.session_state.sprints]
     avg_velocity = sum(sprint_velocity) / len(sprint_velocity) if sprint_velocity else 0
