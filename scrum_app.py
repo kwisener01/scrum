@@ -102,4 +102,31 @@ for sprint in st.session_state.sprints:
     st.write(f"Start: {start_date}, End: {end_date}")
     st.write(f"Tasks: {tasks}")
 
-# Placeholder for AI Sprint Suggestions (To be implemented later)
+# AI-Powered Sprint Suggestions
+st.header("AI Sprint Suggestions")
+if st.session_state.sprints:
+    sprint_velocity = [len(s.get("Tasks", "").split(", ")) for s in st.session_state.sprints]
+    avg_velocity = sum(sprint_velocity) / len(sprint_velocity) if sprint_velocity else 0
+    st.write(f"Based on past sprints, the average velocity is {avg_velocity:.2f} tasks per sprint.")
+    
+    suggested_tasks = avg_velocity  # Suggest assigning a similar number of tasks
+    st.write(f"For the next sprint, consider selecting around {int(suggested_tasks)} tasks.")
+else:
+    st.write("Not enough sprint data available for suggestions.")
+
+# Burndown Chart
+st.header("Sprint Burndown Chart")
+if st.session_state.sprints:
+    import matplotlib.pyplot as plt
+    
+    sprint_dates = [s.get("Start Date", "") for s in st.session_state.sprints]
+    sprint_tasks = [len(s.get("Tasks", "").split(", ")) for s in st.session_state.sprints]
+    
+    fig, ax = plt.subplots()
+    ax.plot(sprint_dates, sprint_tasks, marker='o', linestyle='-')
+    ax.set_xlabel("Sprint Date")
+    ax.set_ylabel("Remaining Tasks")
+    ax.set_title("Sprint Burndown Chart")
+    st.pyplot(fig)
+else:
+    st.write("No sprint data available for a burndown chart.")
