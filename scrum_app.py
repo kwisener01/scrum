@@ -52,7 +52,8 @@ st.sidebar.markdown("""
 ### Step 3: Assign Tasks to the Sprint
 1️⃣ Select a **Sprint** from the dropdown.
 2️⃣ Select a **Task** from the backlog.
-3️⃣ Click **"Assign Task to Sprint"**.
+3️⃣ Select a **Person to Assign** the task to.
+4️⃣ Click **"Assign Task to Sprint"**.
 
 ### Step 4: Track Progress
 1️⃣ View active sprints under **Sprint Overview**.
@@ -73,19 +74,18 @@ st.sidebar.markdown("""
 
 st.title("Scrum Project Management App")
 
-
-
 # Backlog Management
 st.header("Product Backlog")
 with st.form("add_backlog_item"):
     task_name = st.text_input("Task Name")
     priority = st.selectbox("Priority", ["High", "Medium", "Low"])
     story_points = st.number_input("Story Points", min_value=1, max_value=21, step=1)
+    assigned_to = st.text_input("Assigned To")
     submit = st.form_submit_button("Add to Backlog")
     if submit and task_name:
-        new_task = {"Task": task_name, "Priority": priority, "Story Points": story_points, "Status": "Backlog"}
+        new_task = {"Task": task_name, "Priority": priority, "Story Points": story_points, "Assigned To": assigned_to, "Status": "Backlog"}
         st.session_state.backlog.append(new_task)
-        backlog_ws.append_row([new_task["Task"], new_task["Priority"], new_task["Story Points"], new_task["Status"]])
+        backlog_ws.append_row([new_task["Task"], new_task["Priority"], new_task["Story Points"], new_task["Assigned To"], new_task["Status"]])
 
 # Display Backlog
 if st.session_state.backlog:
@@ -112,91 +112,18 @@ if start_sprint and sprint_name.strip():
 
 # Assign Tasks to Sprint
 if st.session_state.sprints:
-    selected_sprint = st.selectbox(
-    "Select Sprint", 
-    [s["Sprint Name"] for s in st.session_state.sprints if "Sprint Name" in s and s["Sprint Name"].strip()] 
-    if st.session_state.sprints else ["No sprints available"]
-)
-    selected_task = st.selectbox(
-    "Select Task from Backlog", 
-    [task["Task"] for task in st.session_state.backlog if "Task" in task] if st.session_state.backlog else ["No tasks available"]
-)
+    selected_sprint = st.selectbox("Select Sprint", [s["Sprint Name"] for s in st.session_state.sprints if "Sprint Name" in s and s["Sprint Name"].strip()] if st.session_state.sprints else ["No sprints available"])
+    selected_task = st.selectbox("Select Task from Backlog", [task["Task"] for task in st.session_state.backlog if "Task" in task] if st.session_state.backlog else ["No tasks available"])
+    assigned_person = st.text_input("Assign To (Enter Name)")
     assign_task = st.button("Assign Task to Sprint")
     
-    if assign_task and selected_sprint and selected_task:
+    if assign_task and selected_sprint and selected_task and assigned_person:
         for task in st.session_state.backlog:
             if task.get("Task") == selected_task:
                 for sprint in st.session_state.sprints:
                     if sprint.get("Sprint Name") == selected_sprint:
-                        sprint["Tasks"] += selected_task + ", "
+                        sprint["Tasks"] += f"{selected_task} (Assigned to: {assigned_person}), "
                 task["Status"] = "In Sprint"
         backlog_ws.update([list(t.values()) for t in st.session_state.backlog])
         sprint_ws.update('A2', [list(s.values()) for s in st.session_state.sprints])
-        st.success(f"Task '{selected_task}' assigned to Sprint '{selected_sprint}'")
-
-# Display Sprint Details
-st.header("Sprint Overview")
-for sprint in st.session_state.sprints:
-    sprint_name = sprint.get("Sprint Name", "Unnamed Sprint")
-    start_date = sprint.get("Start Date", "Unknown Start")
-    end_date = sprint.get("End Date", "Unknown End")
-    tasks = sprint.get("Tasks", "No tasks assigned")
-    
-    st.subheader(sprint_name)
-    st.write(f"Start: {start_date}, End: {end_date}")
-    st.write(f"Tasks: {tasks}")
-
-# AI-Powered Sprint Suggestions
-st.header("AI Sprint Suggestions")
-if st.session_state.sprints:
-    sprint_velocity = [len(s.get("Tasks", "").split(", ")) for s in st.session_state.sprints]
-    avg_velocity = sum(sprint_velocity) / len(sprint_velocity) if sprint_velocity else 0
-    st.write(f"Based on past sprints, the average velocity is {avg_velocity:.2f} tasks per sprint.")
-    
-    suggested_tasks = avg_velocity  # Suggest assigning a similar number of tasks
-    st.write(f"For the next sprint, consider selecting around {int(suggested_tasks)} tasks.")
-else:
-    st.write("Not enough sprint data available for suggestions.")
-
-# Burndown Chart
-st.header("Sprint Burndown Chart")
-if st.session_state.sprints:
-    import matplotlib.pyplot as plt
-    
-    sprint_dates = [s.get("Start Date", "") for s in st.session_state.sprints]
-    sprint_tasks = [len(s.get("Tasks", "").split(", ")) for s in st.session_state.sprints]
-    
-    fig, ax = plt.subplots()
-    ax.plot(sprint_dates, sprint_tasks, marker='o', linestyle='-')
-    ax.set_xlabel("Sprint Date")
-    ax.set_ylabel("Remaining Tasks")
-    ax.set_title("Sprint Burndown Chart")
-    st.pyplot(fig)
-else:
-    st.write("No sprint data available for a burndown chart.")
-
-  
-# Introduction to Agile and Scrum
-st.header("What is the Agile Framework?")
-st.markdown("""
-Agile is a project management and product development approach that emphasizes **iterative progress, collaboration, and flexibility**. 
-It helps teams **respond to change efficiently** and deliver **continuous value**.
-
-### Key Agile Principles:
-- **Customer Collaboration Over Contract Negotiation** 📢
-- **Responding to Change Over Following a Plan** 🔄
-- **Individuals & Interactions Over Processes & Tools** 🤝
-- **Working Software Over Comprehensive Documentation** ✅
-
-### What is Scrum?
-Scrum is a lightweight **Agile framework** that helps teams break work into **manageable sprints** (time-boxed iterations) and continuously improve.
-
-### How to Think and Work in Scrum
-1. **Define Clear Goals** 🎯 – What needs to be achieved in the sprint?
-2. **Prioritize and Break Down Tasks** 📌 – Organize work in the **Product Backlog**.
-3. **Work in Iterations (Sprints)** ⏳ – Short, focused development cycles (e.g., 2 weeks).
-4. **Hold Daily Standups** 🗣️ – Quick check-ins to align and remove blockers.
-5. **Deliver and Reflect** 🔄 – Evaluate completed work and improve for the next sprint.
-
-By following Scrum, teams can stay adaptive, efficient, and **continuously deliver value**! 🚀
-""")
+        st.success(f"Task '{selected_task}' assigned to Sprint '{selected_sprint}' and assigned to '{assigned_person}'")
