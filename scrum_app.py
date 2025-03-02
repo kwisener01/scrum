@@ -86,8 +86,6 @@ with st.form("add_backlog_item"):
         new_task = {"Task": task_name, "Priority": priority, "Story Points": story_points, "Status": "Backlog"}
         st.session_state.backlog.append(new_task)
         backlog_ws.append_row([new_task["Task"], new_task["Priority"], new_task["Story Points"], new_task["Status"]])
-        st.session_state.backlog.append(new_task)
-        backlog_ws.append_row(list(new_task.values()))
 
 # Display Backlog
 if st.session_state.backlog:
@@ -100,7 +98,7 @@ sprint_name = st.text_input("Sprint Name")
 sprint_duration = st.number_input("Sprint Duration (days)", min_value=1, max_value=30, step=1)
 start_sprint = st.button("Start Sprint")
 
-if start_sprint and sprint_name:
+if start_sprint and sprint_name.strip():
     current_time = datetime.now(est)
     new_sprint = {
         "Sprint Name": sprint_name,
@@ -109,14 +107,15 @@ if start_sprint and sprint_name:
         "Tasks": ""
     }
     st.session_state.sprints.append(new_sprint)
-    sprint_ws.append_row(list(new_sprint.values()))
+    sprint_ws.append_row([new_sprint["Sprint Name"], new_sprint["Start Date"], new_sprint["End Date"], new_sprint["Tasks"]])
     st.success(f"Sprint '{sprint_name}' started!")
 
 # Assign Tasks to Sprint
 if st.session_state.sprints:
     selected_sprint = st.selectbox(
     "Select Sprint", 
-    [s.get("Sprint Name", "Unnamed Sprint") for s in st.session_state.sprints] if st.session_state.sprints else ["No sprints available"]
+    [s["Sprint Name"] for s in st.session_state.sprints if "Sprint Name" in s and s["Sprint Name"].strip()] 
+    if st.session_state.sprints else ["No sprints available"]
 )
     selected_task = st.selectbox(
     "Select Task from Backlog", 
@@ -132,7 +131,7 @@ if st.session_state.sprints:
                         sprint["Tasks"] += selected_task + ", "
                 task["Status"] = "In Sprint"
         backlog_ws.update([list(t.values()) for t in st.session_state.backlog])
-        sprint_ws.update([list(s.values()) for s in st.session_state.sprints])
+        sprint_ws.update('A2', [list(s.values()) for s in st.session_state.sprints])
         st.success(f"Task '{selected_task}' assigned to Sprint '{selected_sprint}'")
 
 # Display Sprint Details
