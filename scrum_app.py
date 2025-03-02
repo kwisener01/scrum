@@ -29,7 +29,7 @@ sprint_ws = sheet.worksheet("Sprints")
 if 'backlog' not in st.session_state:
     st.session_state.backlog = backlog_ws.get_all_records()
 if 'sprints' not in st.session_state:
-    st.session_state.sprints = sprint_ws.get_all_records()
+    st.session_state.sprints = sprint_ws.get_all_records(expected_headers=["Sprint Name", "Start Date", "End Date", "Tasks", "Actual Close Date"])
 
 st.set_page_config(page_title="Scrum Project Management", layout="wide")
 
