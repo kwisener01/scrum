@@ -76,6 +76,31 @@ st.title("Scrum Project Management App")
 
 # Daily Sprint Report
 st.header("Daily Sprint Report")
+
+# Sprint Statistics and Burn Rate Analysis
+if st.session_state.sprints:
+    sprint_data = pd.DataFrame(st.session_state.sprints)
+    st.dataframe(sprint_data)
+    
+    # Calculate completion rate
+    total_tasks = sum([len(sprint["Tasks"].split(", ")) for sprint in st.session_state.sprints if sprint["Tasks"]])
+    completed_tasks = sum([len([t for t in sprint["Tasks"].split(", ") if "(Completed)" in t]) for sprint in st.session_state.sprints if sprint["Tasks"]])
+    completion_rate = (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
+    st.metric("Completion Rate", f"{completion_rate:.2f}%")
+
+    # Burn Rate Chart
+    sprint_dates = [sprint["Start Date"] for sprint in st.session_state.sprints]
+    task_counts = [len(sprint["Tasks"].split(", ")) for sprint in st.session_state.sprints if sprint["Tasks"]]
+    
+    fig, ax = plt.subplots()
+    ax.plot(sprint_dates, task_counts, marker='o', linestyle='-', label='Remaining Tasks')
+    ax.set_xlabel("Sprint Start Date")
+    ax.set_ylabel("Number of Tasks")
+    ax.set_title("Sprint Burn Rate")
+    ax.legend()
+    st.pyplot(fig)
+else:
+    st.write("No sprint data available.")
 if st.session_state.sprints:
     sprint_data = pd.DataFrame(st.session_state.sprints)
     st.dataframe(sprint_data)
