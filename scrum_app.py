@@ -59,10 +59,11 @@ st.sidebar.markdown("""
 1️⃣ View active sprints under **Sprint Overview**.
 2️⃣ Update tasks as they are completed.
 
-### Step 5: Complete the Sprint
+### Step 5: Complete the Sprint and Tasks
 1️⃣ Conduct a **Sprint Review** (show progress).
 2️⃣ Conduct a **Sprint Retrospective** (improve future sprints).
 3️⃣ Move unfinished tasks to the next sprint.
+4️⃣ Close completed tasks.
 
 ### Best Practices for Scrum Success
 ✅ **Keep Sprints Short** (1-4 weeks).
@@ -77,7 +78,7 @@ st.title("Scrum Project Management App")
 # Daily Sprint Report
 st.header("Daily Sprint Report")
 
-# Track Task Completion Status (On Time, Early, Late)
+# Track Task and Sprint Completion Status
 if st.session_state.sprints:
     sprint_data = pd.DataFrame(st.session_state.sprints)
     sprint_data["End Date"] = pd.to_datetime(sprint_data["End Date"], errors='coerce')
@@ -119,3 +120,18 @@ if st.session_state.sprints:
                     sprint["Actual Close Date"] = str(actual_close_date)
             sprint_ws.update('A2', [list(s.values()) for s in st.session_state.sprints])
             st.success(f"Sprint '{selected_sprint}' closed on {actual_close_date}!")
+
+# Task Completion Feature
+st.header("Task Completion")
+if st.session_state.backlog:
+    backlog_data = pd.DataFrame(st.session_state.backlog)
+    with st.form("close_task"):
+        selected_task = st.selectbox("Select Task to Close", backlog_data["Task"].unique())
+        close_task = st.form_submit_button("Mark Task as Completed")
+        
+        if close_task:
+            for task in st.session_state.backlog:
+                if task["Task"] == selected_task:
+                    task["Status"] = "Completed"
+            backlog_ws.update('A2', [list(t.values()) for t in st.session_state.backlog])
+            st.success(f"Task '{selected_task}' marked as Completed!")
