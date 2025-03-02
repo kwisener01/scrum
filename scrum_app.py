@@ -78,6 +78,43 @@ st.title("Scrum Project Management App")
 # Daily Sprint Report
 st.header("Daily Sprint Report")
 
+# Sprint Statistics and Burndown Chart
+if st.session_state.sprints:
+    sprint_data = pd.DataFrame(st.session_state.sprints)
+    sprint_data["End Date"] = pd.to_datetime(sprint_data["End Date"], errors='coerce')
+    today = datetime.now(est).date()
+    
+    # Calculate completion rate
+    total_tasks = sum([len(sprint["Tasks"].split(", ")) for sprint in st.session_state.sprints if sprint["Tasks"]])
+    completed_tasks = sum([len([t for t in sprint["Tasks"].split(", ") if "(Completed)" in t]) for sprint in st.session_state.sprints if sprint["Tasks"]])
+    completion_rate = (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
+    st.metric("Completion Rate", f"{completion_rate:.2f}%")
+    
+    # Burndown Chart
+    sprint_dates = [sprint["Start Date"] for sprint in st.session_state.sprints]
+    task_counts = [len(sprint["Tasks"].split(", ")) for sprint in st.session_state.sprints if sprint["Tasks"]]
+    
+    fig, ax = plt.subplots()
+    ax.plot(sprint_dates, task_counts, marker='o', linestyle='-', label='Remaining Tasks')
+    ax.set_xlabel("Sprint Start Date")
+    ax.set_ylabel("Number of Tasks")
+    ax.set_title("Sprint Burndown Chart")
+    ax.legend()
+    st.pyplot(fig)
+else:
+    st.write("No sprint data available.")
+
+# AI-Powered Sprint Suggestions
+st.header("AI Sprint Suggestions")
+if st.session_state.sprints:
+    sprint_velocity = [len(sprint["Tasks"].split(", ")) for sprint in st.session_state.sprints if sprint["Tasks"]]
+    avg_velocity = sum(sprint_velocity) / len(sprint_velocity) if sprint_velocity else 0
+    st.write(f"Based on past sprints, the average velocity is {avg_velocity:.2f} tasks per sprint.")
+    suggested_tasks = avg_velocity  # Suggest assigning a similar number of tasks
+    st.write(f"For the next sprint, consider selecting around {int(suggested_tasks)} tasks.")
+else:
+    st.write("Not enough sprint data available for suggestions.")
+
 # Track Task and Sprint Completion Status
 if st.session_state.sprints:
     sprint_data = pd.DataFrame(st.session_state.sprints)
