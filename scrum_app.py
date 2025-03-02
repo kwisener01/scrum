@@ -148,11 +148,14 @@ if st.session_state.sprints:
     st.metric("Completion Rate", f"{completion_rate:.2f}%")
     
     # Burndown Chart
-    sprint_dates = [sprint["Start Date"] for sprint in st.session_state.sprints]
-    task_counts = [len(sprint["Tasks"].split(", ")) for sprint in st.session_state.sprints if sprint["Tasks"]]
+    sprint_dates = [sprint["Start Date"] for sprint in st.session_state.sprints if sprint["Start Date"]]
+    task_counts = [len(sprint["Tasks"].split(", ")) for sprint in st.session_state.sprints if sprint["Tasks"] and sprint["Start Date"]]
     
     fig, ax = plt.subplots()
-    ax.plot(sprint_dates, task_counts, marker='o', linestyle='-', label='Remaining Tasks')
+    if len(sprint_dates) == len(task_counts):
+        ax.plot(sprint_dates, task_counts, marker='o', linestyle='-', label='Remaining Tasks')
+    else:
+        st.warning("Skipping Burndown Chart due to data mismatch. Check sprint start dates and task counts.")
     ax.set_xlabel("Sprint Start Date")
     ax.set_ylabel("Number of Tasks")
     ax.set_title("Sprint Burndown Chart")
