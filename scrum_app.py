@@ -81,7 +81,10 @@ st.header("Daily Sprint Report")
 if st.session_state.sprints:
     sprint_data = pd.DataFrame(st.session_state.sprints)
     sprint_data["End Date"] = pd.to_datetime(sprint_data["End Date"], errors='coerce')
-    sprint_data["Actual Close Date"] = pd.to_datetime(sprint_data.get("Actual Close Date", None), errors='coerce')
+    if "Actual Close Date" in sprint_data.columns:
+        sprint_data["Actual Close Date"] = pd.to_datetime(sprint_data["Actual Close Date"], errors='coerce')
+    else:
+        sprint_data["Actual Close Date"] = None
     today = datetime.now(est).date()
     
     def task_status(row):
