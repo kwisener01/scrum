@@ -74,6 +74,7 @@ st.sidebar.markdown("""
 st.title("Scrum Project Management App")
 
 
+
 # Backlog Management
 st.header("Product Backlog")
 with st.form("add_backlog_item"):
@@ -83,6 +84,8 @@ with st.form("add_backlog_item"):
     submit = st.form_submit_button("Add to Backlog")
     if submit and task_name:
         new_task = {"Task": task_name, "Priority": priority, "Story Points": story_points, "Status": "Backlog"}
+        st.session_state.backlog.append(new_task)
+        backlog_ws.append_row([new_task["Task"], new_task["Priority"], new_task["Story Points"], new_task["Status"]])
         st.session_state.backlog.append(new_task)
         backlog_ws.append_row(list(new_task.values()))
 
@@ -117,7 +120,7 @@ if st.session_state.sprints:
 )
     selected_task = st.selectbox(
     "Select Task from Backlog", 
-    [task.get("Task", "Unnamed Task") for task in st.session_state.backlog] if st.session_state.backlog else ["No tasks available"]
+    [task["Task"] for task in st.session_state.backlog if "Task" in task] if st.session_state.backlog else ["No tasks available"]
 )
     assign_task = st.button("Assign Task to Sprint")
     
@@ -173,8 +176,7 @@ if st.session_state.sprints:
 else:
     st.write("No sprint data available for a burndown chart.")
 
-
-
+  
 # Introduction to Agile and Scrum
 st.header("What is the Agile Framework?")
 st.markdown("""
