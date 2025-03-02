@@ -74,6 +74,14 @@ st.sidebar.markdown("""
 
 st.title("Scrum Project Management App")
 
+# Daily Sprint Report
+st.header("Daily Sprint Report")
+if st.session_state.sprints:
+    sprint_data = pd.DataFrame(st.session_state.sprints)
+    st.dataframe(sprint_data)
+else:
+    st.write("No sprint data available.")
+
 # Backlog Management
 st.header("Product Backlog")
 with st.form("add_backlog_item"):
