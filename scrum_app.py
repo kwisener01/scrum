@@ -101,7 +101,10 @@ if st.session_state.sprints:
             return "Late"
     
     sprint_data["Status"] = sprint_data.apply(task_status, axis=1)
-    sprint_data["Actual Close Date"] = sprint_data["Actual Close Date"].dt.strftime('%Y-%m-%d')
+    if sprint_data["Actual Close Date"].notna().any():
+        sprint_data["Actual Close Date"] = sprint_data["Actual Close Date"].dt.strftime('%Y-%m-%d')
+    else:
+        sprint_data["Actual Close Date"] = ""
     st.dataframe(sprint_data[["Sprint Name", "Start Date", "End Date", "Actual Close Date", "Status"]])
 
     # Allow user to update actual close date
