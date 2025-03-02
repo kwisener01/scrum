@@ -126,7 +126,7 @@ st.header("Task Completion")
 if st.session_state.backlog:
     backlog_data = pd.DataFrame(st.session_state.backlog)
     with st.form("close_task"):
-        selected_task = st.selectbox("Select Task to Close", backlog_data["Task"].unique())
+        selected_task = st.selectbox("Select Task to Close", backlog_data["Task"].unique() if "Task" in backlog_data.columns else [])
         close_task = st.form_submit_button("Mark Task as Completed")
         
         if close_task:
