@@ -103,7 +103,7 @@ for sprint in st.session_state.sprints:
     st.write(f"Tasks: {tasks}")
 
 # AI-Powered Sprint Suggestions
-st.header("AI Sprint Suggestions")
+st.header("Sprint Suggestions")
 if st.session_state.sprints:
     sprint_velocity = [len(s.get("Tasks", "").split(", ")) for s in st.session_state.sprints]
     avg_velocity = sum(sprint_velocity) / len(sprint_velocity) if sprint_velocity else 0
