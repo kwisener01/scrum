@@ -117,10 +117,10 @@ if st.session_state.sprints:
     "Select Task from Backlog", 
     [task["Task"] for task in st.session_state.backlog if "Task" in task] if st.session_state.backlog else ["No tasks available"]
 )
-    assigned_person = next((task["Assigned To"] for task in st.session_state.backlog if task["Task"] == selected_task), ""), "")
+    assigned_person = next((task["Assigned To"] for task in st.session_state.backlog if task["Task"] == selected_task), "")
     assigned_person = st.text_input("Assign To (Enter Name)", assigned_person)
     
-        assign_task = st.button("Assign Task to Sprint")
+            assign_task = st.button("Assign Task to Sprint")
     
     if assign_task and selected_sprint and selected_task and assigned_person:
         for task in st.session_state.backlog:
